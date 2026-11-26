@@ -49,6 +49,10 @@ storage directories on Android 17 (HyOS990 AGENTS, 26/11/2026). Choices: separat
 - Both kernels imported (y2slte Image `cec30627…9cdb`, y2s Image `14462c2b…752b`). The workflow
   builds y2slte first (the user's device) and skips a variant without an imported kernel.
 
-Pending: create the GitHub repository and run the workflow, then test on the
+- Repository `At30c/OrangeFox_y2s` created (public) and pushed. First run 45781259908 failed right
+  after sourcing `build/envsetup.sh`: it is not written for the `bash -e` shell of GitHub Actions.
+  The build step now loads it with `set +eu` and checks `lunch` and `mka` explicitly.
+
+Pending: a successful workflow run, then test on the
 device (boot, touch, brightness, MTP, adb, mounting the `_a` partitions, Format Data features with
 `dump.f2fs`), and calibrate `OF_STATUS_H` to the camera hole.

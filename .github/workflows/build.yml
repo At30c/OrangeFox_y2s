@@ -59,12 +59,14 @@ jobs:
             fi
             rm -f out/target/product/y2s/recovery.img out/target/product/y2s/kernel \
               out/target/product/y2s/dtbo.img out/target/product/y2s/OrangeFox*.zip
+            # build/envsetup.sh is not written for "bash -e" (the Actions default): load it without
+            # -e/-u and check lunch and the build explicitly.
             (
-              set +u
+              set +eu
               export FOX_VARIANT="$variant"
               source build/envsetup.sh
-              lunch twrp_y2s-eng
-              mka adbd recoveryimage
+              lunch twrp_y2s-eng || exit 1
+              mka adbd recoveryimage || exit 1
             )
             cp out/target/product/y2s/recovery.img "$GITHUB_WORKSPACE/release/OrangeFox_${variant}_recovery.img"
             for zip in out/target/product/y2s/OrangeFox*.zip; do
