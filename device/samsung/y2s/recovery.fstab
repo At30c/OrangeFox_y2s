@@ -1,0 +1,27 @@
+# Android fstab file for OrangeFox on the Galaxy S20+ (y2s/y2slte) running HyOS990.
+#<src>                  <mnt_point>         <type>    <mnt_flags and options>                               <fs_mgr_flags>
+# HyOS990 uses virtual A/B on the Samsung super partition: the logical partitions carry the
+# "_a" suffix (system_a, vendor_a, ...), the physical boot/recovery are not slotted. The
+# recovery has no slot support, so the slot-a names are written out. Each partition is listed
+# for EROFS and ext4 (system_dlkm is ext4 in HyOS990).
+
+system_a                /system             erofs      ro                                                    wait,logical,first_stage_mount
+system_a                /system             ext4       ro                                                    wait,logical,first_stage_mount
+system_ext_a            /system_ext         erofs      ro                                                    wait,logical,first_stage_mount
+system_ext_a            /system_ext         ext4       ro                                                    wait,logical,first_stage_mount
+vendor_a                /vendor             erofs      ro                                                    wait,logical,first_stage_mount
+vendor_a                /vendor             ext4       ro                                                    wait,logical,first_stage_mount
+product_a               /product            erofs      ro                                                    wait,logical,first_stage_mount
+product_a               /product            ext4       ro                                                    wait,logical,first_stage_mount
+odm_a                   /odm                erofs      ro                                                    wait,logical,first_stage_mount
+odm_a                   /odm                ext4       ro                                                    wait,logical,first_stage_mount
+mi_ext_a                /mi_ext             erofs      ro                                                    wait,logical,first_stage_mount
+system_dlkm_a           /system_dlkm        ext4       ro                                                    wait,logical,first_stage_mount
+vendor_dlkm_a           /vendor_dlkm        erofs      ro                                                    wait,logical,first_stage_mount
+
+/dev/block/by-name/metadata	/metadata	    ext4	noatime,nosuid,nodev,noauto_da_alloc,discard,journal_checksum,data=ordered,errors=panic,sync	wait,first_stage_mount,formattable,check
+# HyOS990 runs with /data unencrypted ("Disable encryption" module), so no fileencryption here.
+# "Format Data" uses the emulated_storage.mk properties (project quota and casefold), which
+# Android 17 needs for the app-specific storage directories.
+/dev/block/by-name/userdata	/data	        f2fs	noatime,nosuid,nodev,discard,usrquota,grpquota,fsync_mode=nobarrier,reserve_root=32768,resgid=5678	latemount,wait,check,quota,reservedsize=128M,checkpoint=fs,length=-20480
+/dev/block/by-name/misc /misc               emmc    defaults        defaults,first_stage_mount

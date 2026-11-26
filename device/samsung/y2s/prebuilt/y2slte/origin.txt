@@ -1,0 +1,6 @@
+source=https://github.com/LineageOS/android_kernel_samsung_universal9830.git
+commit=97369af7bbd66581d3e993fea083f3eed02d3c20
+series=10f948f50ab26ddc272d4f3cfdfd97e8ad0d5397decbc207f84050d496ae77ab
+device=y2slte
+compiler=Android (8490178, based on r450784d) clang version 14.0.6 (https://android.googlesource.com/toolchain/llvm-project 4c603efb0cca074e9238af8b4106c30add4418f6)
+Linux version 4.19.325-cip126-st10-g97369af7bbd6-dirty (ats0c@IdeAts0cUbuntu) (Android (8490178, based on r450784d) clang version 14.0.6 (https://android.googlesource.com/toolchain/llvm-project 4c603efb0cca074e9238af8b4106c30add4418f6), LLD 14.0.6) #5 SMP PREEMPT Wed Nov 25 07:27:30 -03 2026
