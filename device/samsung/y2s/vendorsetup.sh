@@ -13,7 +13,8 @@ export ALLOW_MISSING_DEPENDENCIES=true
 # FOX_VARIANT selects the model (y2s or y2slte); BoardConfig.mk uses it to pick prebuilt/<variant>.
 export FOX_VARIANT="${FOX_VARIANT:-y2s}"
 export OF_MAINTAINER="At30c"
-export FOX_MAINTAINER_PATCH_VERSION="HyOS990"
+# Whole numbers only (bootable/recovery/orangefox.mk); the HyOS990 name is in TW_DEVICE_VERSION.
+export FOX_MAINTAINER_PATCH_VERSION=1
 
 # 1440x3200 (20:9): 20 * 120. Centered punch hole and rounded corners.
 export OF_SCREEN_H=2400

@@ -52,6 +52,8 @@ storage directories on Android 17 (HyOS990 AGENTS, 26/11/2026). Choices: separat
 - Repository `At30c/OrangeFox_y2s` created (public) and pushed. First run 45781259908 failed right
   after sourcing `build/envsetup.sh`: it is not written for the `bash -e` shell of GitHub Actions.
   The build step now loads it with `set +eu` and checks `lunch` and `mka` explicitly.
+- Run 45782589023 reached the Soong analysis and stopped: `FOX_MAINTAINER_PATCH_VERSION` must be a
+  whole number (`orangefox.mk:30`); set to 1.
 
 Pending: a successful workflow run, then test on the
 device (boot, touch, brightness, MTP, adb, mounting the `_a` partitions, Format Data features with
