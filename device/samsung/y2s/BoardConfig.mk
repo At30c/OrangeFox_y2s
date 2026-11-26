@@ -120,7 +120,8 @@ TW_NO_REBOOT_BOOTLOADER := true
 TW_HAS_DOWNLOAD_MODE := true
 TW_USE_SERIALNO_PROPERTY_FOR_DEVICE_ID := true
 TW_BACKUP_EXCLUSIONS := /data/fonts/files
-TW_EXTRA_LANGUAGES := true
+# TW_EXTRA_LANGUAGES dropped: its CJK fonts made recovery.img ~650 KB larger than the
+# 69009408-byte partition with the LineageOS kernel (run 45785438117). pt_BR is in the base set.
 TW_EXCLUDE_APEX := true
 TW_EXCLUDE_DEFAULT_USB_INIT := true
 TW_ENABLE_FS_COMPRESSION := true

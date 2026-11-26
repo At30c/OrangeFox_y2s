@@ -53,7 +53,12 @@ storage directories on Android 17 (HyOS990 AGENTS, 26/11/2026). Choices: separat
   after sourcing `build/envsetup.sh`: it is not written for the `bash -e` shell of GitHub Actions.
   The build step now loads it with `set +eu` and checks `lunch` and `mka` explicitly.
 - Run 45782589023 reached the Soong analysis and stopped: `FOX_MAINTAINER_PATCH_VERSION` must be a
-  whole number (`orangefox.mk:30`); set to 1.
+  whole number (`orangefox.mk:30`); set to 1. Run 45784126956 ran on the old commit (dispatched
+  before the push landed).
+- Run 45785438117 (commit `64ba186`) compiled the whole recovery in ~40 min and failed only on the
+  size check: `recovery.img` 69,599,232 bytes > 68,939,776 (partition 69,009,408 minus the AVB
+  footer). The LineageOS kernel is ~5.5 MB larger than the base tree's. `TW_EXTRA_LANGUAGES`
+  (CJK fonts) dropped from `BoardConfig.mk`; pt_BR stays in the base language set.
 
 Pending: a successful workflow run, then test on the
 device (boot, touch, brightness, MTP, adb, mounting the `_a` partitions, Format Data features with
