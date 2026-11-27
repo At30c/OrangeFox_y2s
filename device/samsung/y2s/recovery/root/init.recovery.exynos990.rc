@@ -3,6 +3,9 @@ on early-init
 
 on init
     setprop sys.usb.configfs 1
+    # TW_NO_SCREEN_BLANK (tap to wake) makes the minui fbdev blank only write the brightness, so
+    # the start-up blank/unblank never powers the panel on: unblank it once here.
+    write /sys/class/graphics/fb0/blank 0
 
 on fs
     wait /dev/block/platform/${ro.boot.boot_devices}

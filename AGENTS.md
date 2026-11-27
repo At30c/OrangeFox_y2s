@@ -109,6 +109,11 @@ storage directories on Android 17 (HyOS990 AGENTS, 26/11/2026). Choices: separat
   `sec_ts` touch controller suspend, so a touch could not wake the screen. With the flag the
   screen only goes to brightness 0 and the blank timer unblanks on the next touch, as the old
   TWRP did. Cost: the panel stays powered (black) while blanked. Not built yet.
+- That build (run 45958898063) started with the screen off: with `TW_NO_SCREEN_BLANK` the minui
+  `fbdev_blank` (minuitwrp/graphics_fbdev.cpp) only writes the brightness (truncated to 3 chars)
+  and never issues `FBIOBLANK`, so the start-up blank/unblank never powers the panel on. Writing
+  `0` to `/sys/class/graphics/fb0/blank` live turned the screen on (user confirmed). The recovery
+  init now does that write `on init`.
 
 Pending: a run with the fix, then test on the
 device (boot, touch, brightness, MTP, adb, mounting the `_a` partitions, Format Data features with
