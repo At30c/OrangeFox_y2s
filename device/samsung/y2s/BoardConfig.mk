@@ -116,6 +116,10 @@ TW_BRIGHTNESS_PATH := "/sys/class/backlight/panel/brightness"
 # recovery's LineageOS kernel, 26/11/2026); 486 left the screen almost off.
 TW_MAX_BRIGHTNESS := 48600
 TW_DEFAULT_BRIGHTNESS := 24300
+# Tap to wake, as in the previous TWRP: blanking only sets the brightness to 0 instead of powering
+# the panel down (gr_fb_blank), which also suspends the sec_ts touch controller; a touch then
+# unblanks through the blank timer.
+TW_NO_SCREEN_BLANK := true
 TW_CUSTOM_CPU_TEMP_PATH := "/sys/class/thermal/thermal_zone7/temp"
 TW_NO_REBOOT_BOOTLOADER := true
 TW_HAS_DOWNLOAD_MODE := true

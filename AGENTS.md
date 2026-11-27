@@ -90,6 +90,25 @@ storage directories on Android 17 (HyOS990 AGENTS, 26/11/2026). Choices: separat
   Making the recovery A/B instead was rejected: boot/recovery are not slotted on this device.
   Not compiled locally (no Android tree here). A ZIP install itself was unaffected (the updater
   maps `*_a` through libfs_mgr): `HyOS990_y2slte_20261126.zip` installed successfully.
+- Run 45924677388 (commit `ce8c407`) succeeded: patch applied ("patching file
+  partitionmanager.cpp"), images 69,009,408 bytes, `avbroot avb verify` passes; y2slte image
+  `bc0860b0…3cb9`. Not booted on the device yet.
+- Recovery loop on the splash (user report, 26/11/2026), with this image and also with the trimmed
+  run-45903263755 image that had booted before: the HyOS990 CACHE log collector (LineageOS kernel)
+  recorded `Service 'recovery' received signal 11` every ~5 s, right after reading
+  `/data/media/0/.foxs`. That settings file had been saved after changing language (`pt_BR`), time
+  zone (`GRNLNDST3GRNLNDDT`) and status bar/clock styles; which value crashes the recovery is not
+  known. S-Boot keeps forcing recovery until one boots, so the old TWRP (dump of the device's
+  recovery) was flashed with Heimdall (user request) to get out; MISC's first 4 KiB were also
+  zeroed (user request; not the cause). From TWRP, `.foxs` → `.foxs.bak` and `Fox/.theme` →
+  `.theme.bak` (copies and logs in HyOS990 `out/logs/orangefox-loop-20261126/`). Pending: flash
+  this image again and change one setting at a time to find the crashing value.
+
+- Tap to wake (user request, 27/11/2026): `TW_NO_SCREEN_BLANK := true`. OrangeFox blanked with
+  `gr_fb_blank(true)` (gui/blanktimer.cpp), which powers the panel down and makes the Samsung
+  `sec_ts` touch controller suspend, so a touch could not wake the screen. With the flag the
+  screen only goes to brightness 0 and the blank timer unblanks on the next touch, as the old
+  TWRP did. Cost: the panel stays powered (black) while blanked. Not built yet.
 
 Pending: a run with the fix, then test on the
 device (boot, touch, brightness, MTP, adb, mounting the `_a` partitions, Format Data features with
