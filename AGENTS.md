@@ -34,7 +34,7 @@ storage directories on Android 17 (HyOS990 AGENTS, 26/11/2026). Choices: separat
   `/dev/block/mapper/*_a`, `ro.boot.slot_suffix=_a`), `system_ext`, `mi_ext`, `system_dlkm` (ext4),
   `vendor_dlkm`; `/data` without `fileencryption`.
 - `BoardConfig.mk`: prebuilt kernel per `FOX_VARIANT` (`prebuilt/y2s`, `prebuilt/y2slte`),
-  `TW_DEVICE_VERSION=HyOS990`, brightness 0..486 (LineageOS kernel: `BRT_SCALE` 1, because
+  `TW_DEVICE_VERSION=HyOS990`, brightness 0..486 (later corrected to 0..48600; LineageOS kernel: `BRT_SCALE` 1, because
   `CONFIG_PANEL_BACKLIGHT_PAC_3_0` is off), `TW_Y_OFFSET`/`TW_H_OFFSET` removed in favour of the
   OrangeFox status bar variables.
 - `vendorsetup.sh`: OrangeFox variables (screen 2400, status bar 100, indents 48, clock left/right,
@@ -60,6 +60,20 @@ storage directories on Android 17 (HyOS990 AGENTS, 26/11/2026). Choices: separat
   footer). The LineageOS kernel is ~5.5 MB larger than the base tree's. `TW_EXTRA_LANGUAGES`
   (CJK fonts) dropped from `BoardConfig.mk`; pt_BR stays in the base language set.
 
-Pending: a successful workflow run, then test on the
+- Run 45903263755 succeeded (both variants, artifacts in `out/run-45903263755/OrangeFox_y2s/`).
+- Flashing it from TWRP failed: "image larger than the partition". The image was 69,009,424 bytes,
+  16 more than the recovery partition (69,009,408, read on the device with `blockdev`):
+  `FOX_USE_SAMSUNG_SPECIAL=1` appends `SEANDROIDENFORCE` after the AVB footer of an image already
+  padded to the partition size (which also leaves the footer away from the end). Fix:
+  `FOX_USE_SAMSUNG_SPECIAL=0` in `vendorsetup.sh` (not rebuilt yet). The artifacts were trimmed
+  to 69,009,408 bytes in `out/run-45903263755/fixed/` (with `SHA256SUMS`); `avbroot avb verify`
+  passes on them (hash descriptor and signature). The flashable ZIPs of that run were not changed.
+- Installed on the device (OrangeFox boots). Brightness did not work: the panel driver of the
+  LineageOS kernel reports `max_brightness` 48600 (x100 scale), so the earlier assumption of
+  0..486 was wrong and the default 243 gave `actual_brightness` 3. Writing 24300 live was accepted
+  (`actual_brightness` 403). `BoardConfig.mk` now uses `TW_MAX_BRIGHTNESS` 48600 and default
+  24300 (not rebuilt yet).
+
+Pending: a run with the fix, then test on the
 device (boot, touch, brightness, MTP, adb, mounting the `_a` partitions, Format Data features with
 `dump.f2fs`), and calibrate `OF_STATUS_H` to the camera hole.

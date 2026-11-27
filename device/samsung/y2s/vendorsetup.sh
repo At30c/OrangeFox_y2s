@@ -29,8 +29,11 @@ export OF_ALLOW_DISABLE_NAVBAR=0
 export OF_USE_GREEN_LED=0
 export OF_FLASHLIGHT_ENABLE=0
 
-# Samsung: append SEANDROIDENFORCE to the recovery image (avoids the S-Boot warning).
-export FOX_USE_SAMSUNG_SPECIAL=1
+# No SEANDROIDENFORCE: the AVB-signed image already fills the whole recovery partition
+# (69,009,408 bytes, read on the device), so the 16-byte marker made it too big to flash and also
+# moved the AVB footer off the end of the image. With an unlocked bootloader the marker only hides
+# a warning.
+export FOX_USE_SAMSUNG_SPECIAL=0
 
 # Not a MIUI device: HyOS990 is HyperOS on Samsung hardware, without the Xiaomi bootloader flow.
 export OF_DISABLE_MIUI_SPECIFIC_FEATURES=1

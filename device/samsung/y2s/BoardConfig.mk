@@ -112,9 +112,10 @@ TARGET_USES_MKE2FS := true
 TW_DEVICE_VERSION := HyOS990
 TW_THEME := portrait_hdpi
 TW_BRIGHTNESS_PATH := "/sys/class/backlight/panel/brightness"
-# LineageOS kernel: no x100 brightness scale (CONFIG_PANEL_BACKLIGHT_PAC_3_0 off), 0..486.
-TW_MAX_BRIGHTNESS := 486
-TW_DEFAULT_BRIGHTNESS := 243
+# The panel driver uses the x100 scale (max_brightness 48600, read on the device with this
+# recovery's LineageOS kernel, 26/11/2026); 486 left the screen almost off.
+TW_MAX_BRIGHTNESS := 48600
+TW_DEFAULT_BRIGHTNESS := 24300
 TW_CUSTOM_CPU_TEMP_PATH := "/sys/class/thermal/thermal_zone7/temp"
 TW_NO_REBOOT_BOOTLOADER := true
 TW_HAS_DOWNLOAD_MODE := true
