@@ -43,6 +43,13 @@ jobs:
           ./orangefox_sync.sh --branch 12.1 --path "$HOME/fox_12.1"
           df -h /
 
+      - name: Apply the HyOS990 recovery patches
+        run: |
+          for p in "$GITHUB_WORKSPACE"/patches/bootable_recovery/*.patch; do
+            echo "Applying ${p##*/}"
+            patch -p1 --forward -d "$HOME/fox_12.1/bootable/recovery" < "$p"
+          done
+
       - name: Add the device tree
         run: |
           mkdir -p "$HOME/fox_12.1/device/samsung"

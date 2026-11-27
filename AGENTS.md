@@ -73,6 +73,23 @@ storage directories on Android 17 (HyOS990 AGENTS, 26/11/2026). Choices: separat
   0..486 was wrong and the default 243 gave `actual_brightness` 3. Writing 24300 live was accepted
   (`actual_brightness` 403). `BoardConfig.mk` now uses `TW_MAX_BRIGHTNESS` 48600 and default
   24300 (not rebuilt yet).
+- Commit `3f1f451` (size and brightness) pushed; run 45922573748 dispatched, then cancelled to
+  include the fix below.
+- MTP: the server started before the cable was plugged in, failed with ESHUTDOWN on the bulk
+  endpoint and never retried (Mount > MTP off/on restarts it). After the restart the host opens
+  the session and lists the storage, but listing objects hangs: the server waits on the bulk-out
+  endpoint for a command that never arrives, also with `sys.usb.ffs.aio_compat=true` set live.
+  Suspect: the dwc3/FunctionFS path of the LineageOS kernel. Not fixed; adb push/pull works.
+- Logical partitions were never mapped by the recovery ("unable to update logical partition" for
+  all of them, then "Unable to find partition for path '/system_root'" and "* No ROM"): without
+  `AB_OTA_UPDATER`, `Prepare_Super_Volume` builds the name from the mount point ("vendor") and
+  ignores the `vendor_a` written in the fstab. Our own patch
+  `patches/bootable_recovery/0001-map-logical-partitions-by-fstab-name.patch` (against
+  `fox_12.1` `partitionmanager.cpp`, checked with `patch --dry-run`) keeps a bare fstab name per
+  mount point, also in `Unmap_Super_Devices`; the workflow applies the series after the sync.
+  Making the recovery A/B instead was rejected: boot/recovery are not slotted on this device.
+  Not compiled locally (no Android tree here). A ZIP install itself was unaffected (the updater
+  maps `*_a` through libfs_mgr): `HyOS990_y2slte_20261126.zip` installed successfully.
 
 Pending: a run with the fix, then test on the
 device (boot, touch, brightness, MTP, adb, mounting the `_a` partitions, Format Data features with

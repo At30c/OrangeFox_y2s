@@ -1,0 +1,54 @@
+From: At30c
+Subject: [PATCH] partitionmanager: map logical partitions by their fstab name
+
+Without AB_OTA_UPDATER, Prepare_Super_Volume and Unmap_Super_Devices derive
+the logical partition name from the mount point ("/vendor" -> "vendor"). The
+HyOS990 fstab writes the slot-a names out ("vendor_a"), because the recovery
+has no slot support, so no logical partition was ever mapped. Keep a bare
+name given in the fstab block device column, per mount point.
+
+Applies to OrangeFox bootable/recovery, branch fox_12.1 (Apache-2.0).
+---
+--- a/partitionmanager.cpp
++++ b/partitionmanager.cpp
+@@ -4635,6 +4635,20 @@
+ 		return TWFunc::Remove_Beginning_Slash(Mount_Point);
+ }
+ 
++// HyOS990: logical partition names given in the fstab. Without AB_OTA_UPDATER the name was always
++// derived from the mount point ("/vendor" -> "vendor"), so a slot-a layout written out in the
++// fstab ("vendor_a") was never mapped. A bare name (no "/") in the block device column is kept
++// per mount point, since Set_Block_Device later replaces it with the dm device.
++static std::map<std::string, std::string> Hyos_Super_Names;
++
++static std::string Hyos_Super_Name(const std::string& mount_point, const std::string& device,
++		const std::string& fallback) {
++	if (!device.empty() && device.find('/') == std::string::npos)
++		Hyos_Super_Names[mount_point] = device;
++	auto found = Hyos_Super_Names.find(mount_point);
++	return found == Hyos_Super_Names.end() ? fallback : found->second;
++}
++
+ bool TWPartitionManager::Prepare_Super_Volume(TWPartition* twrpPart) {
+     Fstab fstab;
+ 	std::string bare_partition_name = Get_Bare_Partition_Name(twrpPart->Get_Mount_Point());
+@@ -4646,7 +4660,8 @@
+ #ifdef AB_OTA_UPDATER
+ 	blk_device_partition = bare_partition_name + PartitionManager.Get_Active_Slot_Suffix();
+ #else
+-	blk_device_partition = bare_partition_name;
++	blk_device_partition = Hyos_Super_Name(twrpPart->Get_Mount_Point(),
++			twrpPart->Primary_Block_Device, bare_partition_name);
+ #endif
+ 
+ 	FstabEntry fstabEntry = {
+@@ -4832,6 +4847,9 @@
+ 			std::string blk_device_partition = bare_partition_name;
+ 			if (DataManager::GetIntValue("of_ab_device") == 1)
+ 				blk_device_partition.append(PartitionManager.Get_Active_Slot_Suffix());
++			else
++				blk_device_partition = Hyos_Super_Name(part->Get_Mount_Point(),
++						part->Primary_Block_Device, blk_device_partition);
+ 			(*iter)->UnMount(false);
+ 			LOGINFO("removing dynamic partition: %s\n", blk_device_partition.c_str());
+ 			destroyed = DestroyLogicalPartition(blk_device_partition);
